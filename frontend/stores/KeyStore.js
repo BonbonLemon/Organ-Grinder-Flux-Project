@@ -12,37 +12,24 @@ KeyStore.all = function () {
 KeyStore.__onDispatch = function (payload) {
   switch(payload.actionType) {
     case "CREATE_KEY":
-      createKey(payload);
+      createKey(payload.note);
       break;
     case "REMOVE_KEY":
-      removeKey(payload);
+      removeKey(payload.note);
       break;
   }
 };
 
 var createKey = function (key) {
-  var idx;
-  _keys.forEach(function (note, index) {
-    if (note === key.note) {
-      idx = index;
-    }
-  });
-
-  if (typeof idx === "undefined") {
-    _keys.push(key.note);
+  if ( _keys.indexOf(key) === -1) {
+    _keys.push(key);
     KeyStore.__emitChange();
   }
 };
 
 var removeKey = function (key) {
-  var idx;
-  _keys.forEach(function (note, index) {
-    if (note === key.note) {
-      idx = index;
-    }
-  });
-
-  if (typeof idx !== "undefined") {
+  var idx = _keys.indexOf(key);
+  if ( idx !== -1) {
     _keys.splice(idx, 1);
     KeyStore.__emitChange();
   }

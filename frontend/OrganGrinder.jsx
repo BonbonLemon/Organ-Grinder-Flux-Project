@@ -6,6 +6,6 @@ var KeyListener = require('./util/KeyListener.js')
 
 document.addEventListener("DOMContentLoaded", function () {
   var root = document.querySelector('#root');
-  new KeyListener(root);
+  KeyListener.bindEvents();
   ReactDOM.render(<Organ />, root);
 });

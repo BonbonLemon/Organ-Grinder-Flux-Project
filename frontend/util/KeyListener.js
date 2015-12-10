@@ -7,12 +7,9 @@ var Mapping = {
   68: 'E4'
 };
 
-var KeyListener = function ($el) {
-  this.$el = $el;
-  this.bindEvents();
-}
+var KeyListener = {}
 
-KeyListener.prototype.bindEvents = function () {
+KeyListener.bindEvents = function () {
   window.addEventListener("keydown", function(e) {
     keyPressActions.keyDown(Mapping[e.keyCode]);
   });

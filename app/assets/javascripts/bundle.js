@@ -47,12 +47,12 @@
 	var ReactDOM = __webpack_require__(1);
 	var React = __webpack_require__(147);
 	var TONES = __webpack_require__(159);
-	var Organ = __webpack_require__(185);
-	var KeyListener = __webpack_require__(183);
+	var Organ = __webpack_require__(160);
+	var KeyListener = __webpack_require__(184);
 	
 	document.addEventListener("DOMContentLoaded", function () {
 	  var root = document.querySelector('#root');
-	  new KeyListener(root);
+	  KeyListener.bindEvents();
 	  ReactDOM.render(React.createElement(Organ, null), root);
 	});
 
@@ -19660,8 +19660,32 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(147),
-	    KeyStore = __webpack_require__(161),
-	    Note = __webpack_require__(182),
+	    TONES = __webpack_require__(159),
+	    Key = __webpack_require__(161);
+	
+	var Organ = React.createClass({
+	  displayName: 'Organ',
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      Object.keys(TONES).map(function (note, index) {
+	        return React.createElement(Key, { noteName: note, key: index });
+	      })
+	    );
+	  }
+	});
+	
+	module.exports = Organ;
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(147),
+	    KeyStore = __webpack_require__(162),
+	    Note = __webpack_require__(183),
 	    TONES = __webpack_require__(159);
 	
 	var Key = React.createClass({
@@ -19678,10 +19702,8 @@
 	
 	  keyChanged: function () {
 	    if (this.isPressed()) {
-	      console.log("starting...");
 	      this.note.start();
 	    } else {
-	      console.log('stopping...');
 	      this.note.stop();
 	    }
 	  },
@@ -19707,11 +19729,11 @@
 	module.exports = Key;
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(162),
-	    Store = __webpack_require__(166).Store;
+	var AppDispatcher = __webpack_require__(163),
+	    Store = __webpack_require__(167).Store;
 	
 	var KeyStore = new Store(AppDispatcher);
 	
@@ -19724,37 +19746,24 @@
 	KeyStore.__onDispatch = function (payload) {
 	  switch (payload.actionType) {
 	    case "CREATE_KEY":
-	      createKey(payload);
+	      createKey(payload.note);
 	      break;
 	    case "REMOVE_KEY":
-	      removeKey(payload);
+	      removeKey(payload.note);
 	      break;
 	  }
 	};
 	
 	var createKey = function (key) {
-	  var idx;
-	  _keys.forEach(function (note, index) {
-	    if (note === key.note) {
-	      idx = index;
-	    }
-	  });
-	
-	  if (typeof idx === "undefined") {
-	    _keys.push(key.note);
+	  if (_keys.indexOf(key) === -1) {
+	    _keys.push(key);
 	    KeyStore.__emitChange();
 	  }
 	};
 	
 	var removeKey = function (key) {
-	  var idx;
-	  _keys.forEach(function (note, index) {
-	    if (note === key.note) {
-	      idx = index;
-	    }
-	  });
-	
-	  if (typeof idx !== "undefined") {
+	  var idx = _keys.indexOf(key);
+	  if (idx !== -1) {
 	    _keys.splice(idx, 1);
 	    KeyStore.__emitChange();
 	  }
@@ -19763,15 +19772,15 @@
 	module.exports = KeyStore;
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(163).Dispatcher;
+	var Dispatcher = __webpack_require__(164).Dispatcher;
 	
 	module.exports = new Dispatcher();
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -19783,11 +19792,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(164);
+	module.exports.Dispatcher = __webpack_require__(165);
 
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -19809,7 +19818,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	var _prefix = 'ID_';
 	
@@ -20024,7 +20033,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20079,7 +20088,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20091,15 +20100,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(167);
-	module.exports.MapStore = __webpack_require__(170);
-	module.exports.Mixin = __webpack_require__(181);
-	module.exports.ReduceStore = __webpack_require__(171);
-	module.exports.Store = __webpack_require__(172);
+	module.exports.Container = __webpack_require__(168);
+	module.exports.MapStore = __webpack_require__(171);
+	module.exports.Mixin = __webpack_require__(182);
+	module.exports.ReduceStore = __webpack_require__(172);
+	module.exports.Store = __webpack_require__(173);
 
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20121,10 +20130,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(168);
+	var FluxStoreGroup = __webpack_require__(169);
 	
-	var invariant = __webpack_require__(165);
-	var shallowEqual = __webpack_require__(169);
+	var invariant = __webpack_require__(166);
+	var shallowEqual = __webpack_require__(170);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -20282,7 +20291,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20301,7 +20310,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -20363,7 +20372,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports) {
 
 	/**
@@ -20418,7 +20427,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20439,10 +20448,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(171);
-	var Immutable = __webpack_require__(180);
+	var FluxReduceStore = __webpack_require__(172);
+	var Immutable = __webpack_require__(181);
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -20568,7 +20577,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20589,10 +20598,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(172);
+	var FluxStore = __webpack_require__(173);
 	
-	var abstractMethod = __webpack_require__(179);
-	var invariant = __webpack_require__(165);
+	var abstractMethod = __webpack_require__(180);
+	var invariant = __webpack_require__(166);
 	
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -20675,7 +20684,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20694,11 +20703,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(173);
+	var _require = __webpack_require__(174);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -20858,7 +20867,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20871,14 +20880,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(174)
+	  EventEmitter: __webpack_require__(175)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20897,11 +20906,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(175);
-	var EventSubscriptionVendor = __webpack_require__(177);
+	var EmitterSubscription = __webpack_require__(176);
+	var EventSubscriptionVendor = __webpack_require__(178);
 	
-	var emptyFunction = __webpack_require__(178);
-	var invariant = __webpack_require__(165);
+	var emptyFunction = __webpack_require__(179);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -21075,7 +21084,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21096,7 +21105,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(176);
+	var EventSubscription = __webpack_require__(177);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -21128,7 +21137,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports) {
 
 	/**
@@ -21179,7 +21188,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21198,7 +21207,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -21288,7 +21297,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports) {
 
 	/**
@@ -21331,7 +21340,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21348,7 +21357,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -21358,7 +21367,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26323,7 +26332,7 @@
 	}));
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26340,9 +26349,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(168);
+	var FluxStoreGroup = __webpack_require__(169);
 	
-	var invariant = __webpack_require__(165);
+	var invariant = __webpack_require__(166);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -26446,7 +26455,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports) {
 
 	// util/Note.js
@@ -26488,11 +26497,11 @@
 	module.exports = Note;
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var KeyStore = __webpack_require__(161),
-	    keyPressActions = __webpack_require__(184);
+	var KeyStore = __webpack_require__(162),
+	    keyPressActions = __webpack_require__(185);
 	
 	var Mapping = {
 	  65: 'C4',
@@ -26500,12 +26509,9 @@
 	  68: 'E4'
 	};
 	
-	var KeyListener = function ($el) {
-	  this.$el = $el;
-	  this.bindEvents();
-	};
+	var KeyListener = {};
 	
-	KeyListener.prototype.bindEvents = function () {
+	KeyListener.bindEvents = function () {
 	  window.addEventListener("keydown", function (e) {
 	    keyPressActions.keyDown(Mapping[e.keyCode]);
 	  });
@@ -26517,10 +26523,10 @@
 	module.exports = KeyListener;
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var AppDispatcher = __webpack_require__(162);
+	var AppDispatcher = __webpack_require__(163);
 	
 	var keyPressActions = {
 	  keyDown: function (note) {
@@ -26539,30 +26545,6 @@
 	};
 	
 	module.exports = keyPressActions;
-
-/***/ },
-/* 185 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var React = __webpack_require__(147),
-	    TONES = __webpack_require__(159),
-	    Key = __webpack_require__(160);
-	
-	var Organ = React.createClass({
-	  displayName: 'Organ',
-	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      Object.keys(TONES).map(function (note, index) {
-	        return React.createElement(Key, { noteName: note, key: index });
-	      })
-	    );
-	  }
-	});
-	
-	module.exports = Organ;
 
 /***/ }
 /******/ ]);

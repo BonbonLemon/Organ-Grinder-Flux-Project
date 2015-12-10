@@ -15,10 +15,8 @@ var Key = React.createClass({
 
   keyChanged: function() {
     if (this.isPressed()) {
-      console.log("starting...");
       this.note.start();
     } else {
-      console.log('stopping...');
       this.note.stop();
     }
   },
