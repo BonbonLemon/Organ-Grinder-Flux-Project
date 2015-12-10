@@ -19650,7 +19650,9 @@
 	var TONES = {
 	  'C4': 261.63,
 	  'D4': 293.66,
-	  'E4': 329.63
+	  'E4': 329.63,
+	  'F4': 349.63,
+	  'G4': 392.00
 	};
 	
 	module.exports = TONES;
@@ -19661,7 +19663,8 @@
 
 	var React = __webpack_require__(147),
 	    TONES = __webpack_require__(159),
-	    Key = __webpack_require__(161);
+	    Key = __webpack_require__(161),
+	    Recorder = __webpack_require__(186);
 	
 	var Organ = React.createClass({
 	  displayName: 'Organ',
@@ -19702,10 +19705,14 @@
 	
 	  keyChanged: function () {
 	    if (this.isPressed()) {
+	      this.background = { background: 'red' };
 	      this.note.start();
 	    } else {
+	      this.background = { background: 'white' };
 	      this.note.stop();
 	    }
+	
+	    this.forceUpdate();
 	  },
 	
 	  isPressed: function () {
@@ -19713,6 +19720,7 @@
 	    if (KeyStore.all().indexOf(this.props.noteName) === -1) {
 	      return false;
 	    } else {
+	      // this.background['color'] = 'red';
 	      return true;
 	    }
 	  },
@@ -19720,7 +19728,7 @@
 	  render: function () {
 	    return React.createElement(
 	      'div',
-	      null,
+	      { style: this.background },
 	      this.props.noteName
 	    );
 	  }
@@ -26486,7 +26494,7 @@
 	Note.prototype = {
 	  start: function () {
 	    // can't explain 0.3, it is a reasonable value
-	    this.gainNode.gain.value = 0.3;
+	    this.gainNode.gain.value = 0.8;
 	  },
 	
 	  stop: function () {
@@ -26506,7 +26514,9 @@
 	var Mapping = {
 	  65: 'C4',
 	  83: 'D4',
-	  68: 'E4'
+	  68: 'E4',
+	  70: 'F4',
+	  71: 'G4'
 	};
 	
 	var KeyListener = {};
@@ -26545,6 +26555,109 @@
 	};
 	
 	module.exports = keyPressActions;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(147),
+	    Track = __webpack_require__(187),
+	    KeyStore = __webpack_require__(162);
+	
+	var Recorder = React.createClass({
+	  displayName: 'Recorder',
+	
+	  getInitialstate: function () {
+	    return {
+	      isRecording: false,
+	      Track: new Track()
+	    };
+	  },
+	
+	  startRecording: function () {
+	    KeyStore.addListener(this.state.Track.addNotes.bind(this));
+	  },
+	
+	  stopRecording: function () {
+	    KeyStore.removeListener(this.state.Track.addNotes.bind(this));
+	  },
+	
+	  render: function () {
+	    var value, action;
+	    if (this.state.isRecording) {
+	      value = "Stop";
+	      action = this.state.Track.stopRecording;
+	      this.startRecording();
+	    } else {
+	      value = "Record";
+	      action = this.state.Track.startRecording;
+	      this.stopRecording();
+	    }
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement('input', { type: 'submit',
+	        value: value,
+	        onClick: action()
+	      }),
+	      React.createElement('input', { type: 'submit',
+	        value: 'Play',
+	        onClick: this.state.Track.play()
+	      })
+	    );
+	  }
+	});
+	
+	module.exports = Recorder;
+
+/***/ },
+/* 187 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var KeyStore = __webpack_require__(162);
+	
+	var Track = function (attributes) {
+	  this.name = attributes['name'];
+	
+	  if (attributes['roll']) {
+	    this.roll = attributes['roll'];
+	  } else {
+	    this.roll = [];
+	  }
+	};
+	
+	Track.prototype.startRecording = function () {
+	  this.roll = [];
+	  this.startTime = Date.now();
+	};
+	
+	Track.prototype.stopRecording = function () {
+	  this.addNotes([]);
+	};
+	
+	Track.prototype.addNotes = function () {
+	  var notes = {};
+	
+	  notes['timeSlice'] = Date.now() - this.startTime;
+	  notes['notes'] = KeyStore.all();
+	
+	  this.roll.push(notes);
+	};
+	
+	Track.prototype.play = function () {
+	  if (this.interval) {
+	    return;
+	  }
+	
+	  var playbackStartTime = Date.now(),
+	      currentNote = 0;
+	
+	  setInterval(function () {
+	    if (Date.now() - playbackStartTime > this.roll[0]['timeSlice']) {}
+	  });
+	};
+	
+	module.exports = Track;
 
 /***/ }
 /******/ ]);

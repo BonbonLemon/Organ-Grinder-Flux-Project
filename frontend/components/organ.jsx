@@ -1,6 +1,7 @@
 var React = require('react'),
     TONES = require('./../constants/Tones.js'),
-    Key = require('./key.jsx');
+    Key = require('./key.jsx'),
+    Recorder = require('./Recorder.jsx');
 
 var Organ = React.createClass({
   render: function () {

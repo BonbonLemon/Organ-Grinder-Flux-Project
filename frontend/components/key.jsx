@@ -15,10 +15,14 @@ var Key = React.createClass({
 
   keyChanged: function() {
     if (this.isPressed()) {
+      this.background = {background: 'red'};
       this.note.start();
     } else {
+      this.background = {background: 'white'};
       this.note.stop();
     }
+
+    this.forceUpdate();
   },
 
   isPressed: function () {
@@ -26,14 +30,15 @@ var Key = React.createClass({
     if (KeyStore.all().indexOf(this.props.noteName) === -1) {
       return false;
     } else {
+      // this.background['color'] = 'red';
       return true;
     }
   },
 
   render: function () {
     return (
-      <div>{this.props.noteName}</div>
-    )
+      <div style={this.background}>{this.props.noteName}</div>
+    );
   }
 });
 

@@ -4,7 +4,9 @@ var KeyStore = require('./../stores/KeyStore.js'),
 var Mapping = {
   65: 'C4',
   83: 'D4',
-  68: 'E4'
+  68: 'E4',
+  70: 'F4',
+  71: 'G4'
 };
 
 var KeyListener = {}
